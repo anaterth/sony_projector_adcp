@@ -201,7 +201,7 @@ class SonyProjectorMediaPlayer(MediaPlayerEntity):
         self._temperature = None
         self._error_status = None
         self._warning_status = None
-        self._diag_poll_counter = 0
+        self._diag_poll_counter = 9  # poll diagnostics on first update
 
     # ── Update ────────────────────────────────────────────────────────
 
