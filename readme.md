@@ -454,6 +454,23 @@ This integration communicates via Sony's ADCP protocol over TCP port 53595. Key 
 - **Connection timeout**: Projector drops idle connections after 60 seconds
 - **Documentation**: [Sony Protocol Manual](https://pro.sony/s3/2018/07/03140912/Sony_Protocol-Manual_1st-Edition-Revised-2.pdf)
 
+## References
+
+### Official Sony Documentation
+- [Sony Protocol Manual (Common)](https://pro.sony/s3/2018/07/03140912/Sony_Protocol-Manual_1st-Edition-Revised-2.pdf) — Connection, authentication, command format, error codes
+- [Sony Protocol Manual (Supported Command List)](https://pro.sony/s3/2018/07/19110602/Sony_Protocol-Manual_Supported-Command-List_1st-Edition-Revised-1.pdf) — Per-model command compatibility matrix
+- [VPL-XW5000ES Help Guide — ADCP Setup](https://helpguide.sony.net/vpl/xw5000/v1/en/contents/TP1000558245.html) — Network and ADCP configuration on the projector
+- [Sony Canada — VPL-XW5000ES Manuals](https://www.sony.ca/en/electronics/support/product/vpl-xw5000es/manuals) — Full technical manual download (includes XW5000-specific command list)
+
+### Community Projects
+- [kennymc-c/ucr-integration-sonyADCP](https://github.com/kennymc-c/ucr-integration-sonyADCP) — Unfolded Circle Remote integration for Sony ADCP; comprehensive command implementation including lens, iris, 3D, and sensor data
+- [tokyotexture/homeassistant-custom-components](https://github.com/tokyotexture/homeassistant-custom-components) — Minimal HA switch entity for Sony ADCP power control
+
+### Community Discussions
+- [Sony Projector ADCP Control — HA Community](https://community.home-assistant.io/t/sony-projector-adcp-control/933745) — Home Assistant community thread for this integration
+- [Sony ADCP Projector Switch — HA Community](https://community.home-assistant.io/t/sony-adcp-projector-switch/87625) — Earlier HA community discussion on ADCP control
+- [VPL-XW5000ES/XW6000ES/XW7000ES Owner's Thread — AVS Forum](https://www.avsforum.com/threads/the-sony-vpl-xw5000es-vplxw6000es-and-vpl-xw7000es-owner%E2%80%99s-thread.3249511/) — Extensive owner discussion including calibration, settings, and network control tips
+
 ## Contributing
 
 Contributions welcome. Please submit a Pull Request.
