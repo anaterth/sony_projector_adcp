@@ -29,6 +29,70 @@ send_key:
               value: reset
             - label: Blank (Video Mute)
               value: blank
+            - label: Power On
+              value: power_on
+            - label: Power Off
+              value: power_off
+            - label: Input Select
+              value: input
+            - label: Lens Control
+              value: lens_control
+            - label: Lens Focus
+              value: lens_focus
+            - label: Lens Focus Far
+              value: lens_focus_far
+            - label: Lens Focus Near
+              value: lens_focus_near
+            - label: Lens Zoom
+              value: lens_zoom
+            - label: Lens Zoom Up
+              value: lens_zoom_up
+            - label: Lens Zoom Down
+              value: lens_zoom_down
+            - label: Lens Shift
+              value: lens_shift
+            - label: Lens Shift Up
+              value: lens_shift_up
+            - label: Lens Shift Down
+              value: lens_shift_down
+            - label: Lens Shift Left
+              value: lens_shift_left
+            - label: Lens Shift Right
+              value: lens_shift_right
+            - label: Lens Position 1
+              value: lens_position1
+            - label: Lens Position 2
+              value: lens_position2
+            - label: Lens Position 3
+              value: lens_position3
+            - label: Lens Position 4
+              value: lens_position4
+            - label: Lens Position 5
+              value: lens_position5
+            - label: Aspect Cycle
+              value: aspect
+            - label: Picture Mode Cycle
+              value: picmode
+            - label: Color Temperature Cycle
+              value: color_temp
+            - label: Motionflow Cycle
+              value: motionflow
+            - label: Gamma Correction Cycle
+              value: gamma_correction
+            - label: Reality Creation Toggle
+              value: reality_creation
+            - label: Iris Mode Cycle
+              value: iris_mode
+            - label: Laser Brightness +
+              value: "laser_brightness +"
+            - label: Laser Brightness -
+              value: "laser_brightness -"
+            - label: 3D Toggle
+              value: "3d"
+            - label: Status On
+              value: status_on
+            - label: Status Off
+              value: status_off
 
 set_picture_mode:
   name: Set Picture Mode
@@ -61,12 +125,322 @@ set_picture_mode:
               value: brt_cinema
             - label: Bright TV
               value: brt_tv
+            - label: IMAX Enhanced
+              value: imax
+            - label: User
+              value: user
             - label: User 1
               value: user1
             - label: User 2
               value: user2
             - label: User 3
               value: user3
+            - label: Cinema Digital
+              value: cinema_digital
+
+set_aspect_ratio:
+  name: Set Aspect Ratio
+  description: Set the display aspect ratio
+  target:
+    entity:
+      domain: media_player
+      integration: sony_projector_adcp
+  fields:
+    mode:
+      name: Aspect Ratio
+      description: The aspect ratio to set
+      required: true
+      selector:
+        select:
+          options:
+            - label: Normal
+              value: normal
+            - label: V Stretch
+              value: v_stretch
+            - label: Squeeze
+              value: squeeze
+            - label: "1.85:1 Zoom"
+              value: 1.85_1_zoom
+            - label: "2.35:1 Zoom"
+              value: 2.35_1_zoom
+            - label: Stretch
+              value: stretch
+
+set_hdr_mode:
+  name: Set HDR Mode
+  description: Set the HDR processing mode
+  target:
+    entity:
+      domain: media_player
+      integration: sony_projector_adcp
+  fields:
+    mode:
+      name: HDR Mode
+      description: The HDR mode to set
+      required: true
+      selector:
+        select:
+          options:
+            - label: Auto
+              value: auto
+            - label: "On"
+              value: "on"
+            - label: HDR10
+              value: hdr10
+            - label: HDR Reference
+              value: hdr_reference
+            - label: HLG
+              value: hlg
+            - label: "Off"
+              value: "off"
+
+set_motionflow:
+  name: Set Motionflow
+  description: Set the Motionflow (motion interpolation) mode
+  target:
+    entity:
+      domain: media_player
+      integration: sony_projector_adcp
+  fields:
+    mode:
+      name: Motionflow Mode
+      description: The Motionflow mode to set
+      required: true
+      selector:
+        select:
+          options:
+            - label: Smooth High
+              value: smooth_high
+            - label: Smooth Low
+              value: smooth_low
+            - label: Impulse
+              value: impulse
+            - label: Combination
+              value: combination
+            - label: True Cinema
+              value: true_cinema
+            - label: "Off"
+              value: "off"
+
+set_color_temp:
+  name: Set Color Temperature
+  description: Set the color temperature preset
+  target:
+    entity:
+      domain: media_player
+      integration: sony_projector_adcp
+  fields:
+    mode:
+      name: Color Temperature
+      description: The color temperature preset to use
+      required: true
+      selector:
+        select:
+          options:
+            - label: D93
+              value: d93
+            - label: D75
+              value: d75
+            - label: D65
+              value: d65
+            - label: D55
+              value: d55
+            - label: DCI
+              value: dci
+            - label: Custom 1
+              value: custom1
+            - label: Custom 2
+              value: custom2
+            - label: Custom 3
+              value: custom3
+            - label: Custom 4
+              value: custom4
+            - label: Custom 5
+              value: custom5
+
+set_gamma:
+  name: Set Gamma Correction
+  description: Set the gamma correction curve
+  target:
+    entity:
+      domain: media_player
+      integration: sony_projector_adcp
+  fields:
+    mode:
+      name: Gamma
+      description: The gamma preset to use
+      required: true
+      selector:
+        select:
+          options:
+            - label: "1.8"
+              value: "1.8"
+            - label: "2.0"
+              value: "2.0"
+            - label: "2.1"
+              value: "2.1"
+            - label: "2.2"
+              value: "2.2"
+            - label: "2.4"
+              value: "2.4"
+            - label: "2.6"
+              value: "2.6"
+            - label: Gamma 7
+              value: gamma7
+            - label: Gamma 8
+              value: gamma8
+            - label: Gamma 9
+              value: gamma9
+            - label: Gamma 10
+              value: gamma10
+            - label: "Off"
+              value: "off"
+
+set_color_space:
+  name: Set Color Space
+  description: Set the color space
+  target:
+    entity:
+      domain: media_player
+      integration: sony_projector_adcp
+  fields:
+    mode:
+      name: Color Space
+      description: The color space to use
+      required: true
+      selector:
+        select:
+          options:
+            - label: BT.709
+              value: bt709
+            - label: BT.2020
+              value: bt2020
+            - label: Adobe RGB
+              value: adobe_rgb
+            - label: DCI
+              value: dci
+            - label: Color Space 1
+              value: color_space1
+            - label: Color Space 2
+              value: color_space2
+            - label: Color Space 3
+              value: color_space3
+            - label: Custom
+              value: custom
+            - label: Custom 1
+              value: custom1
+            - label: Custom 2
+              value: custom2
+
+set_noise_reduction:
+  name: Set Noise Reduction
+  description: Set the noise reduction mode
+  target:
+    entity:
+      domain: media_player
+      integration: sony_projector_adcp
+  fields:
+    mode:
+      name: Noise Reduction
+      description: The noise reduction level
+      required: true
+      selector:
+        select:
+          options:
+            - label: Auto
+              value: auto
+            - label: High
+              value: high
+            - label: Mid
+              value: mid
+            - label: Low
+              value: low
+            - label: "Off"
+              value: "off"
+
+set_film_mode:
+  name: Set Film Mode
+  description: Set the film mode (cadence detection)
+  target:
+    entity:
+      domain: media_player
+      integration: sony_projector_adcp
+  fields:
+    mode:
+      name: Film Mode
+      description: The film mode setting
+      required: true
+      selector:
+        select:
+          options:
+            - label: Auto
+              value: auto
+            - label: "Off"
+              value: "off"
+
+set_iris_mode:
+  name: Set Iris Mode
+  description: Set the auto iris (dynamic contrast) mode
+  target:
+    entity:
+      domain: media_player
+      integration: sony_projector_adcp
+  fields:
+    mode:
+      name: Iris Mode
+      description: The auto iris mode
+      required: true
+      selector:
+        select:
+          options:
+            - label: Full
+              value: full
+            - label: Limited
+              value: limited
+            - label: "Off"
+              value: "off"
+
+set_lamp_control:
+  name: Set Lamp Control
+  description: Set the lamp/laser output mode
+  target:
+    entity:
+      domain: media_player
+      integration: sony_projector_adcp
+  fields:
+    mode:
+      name: Lamp Control
+      description: The lamp output level
+      required: true
+      selector:
+        select:
+          options:
+            - label: High
+              value: high
+            - label: Low
+              value: low
+
+set_light_output_mode:
+  name: Set Light Output Dynamic Control
+  description: Set the light source dynamic control mode
+  target:
+    entity:
+      domain: media_player
+      integration: sony_projector_adcp
+  fields:
+    mode:
+      name: Dynamic Control
+      description: The light source dynamic control mode
+      required: true
+      selector:
+        select:
+          options:
+            - label: Full
+              value: full
+            - label: Limited
+              value: limited
+            - label: "Off"
+              value: "off"
 
 set_brightness:
   name: Set Brightness
@@ -144,9 +518,47 @@ set_light_output:
           step: 1
           mode: slider
 
+set_color:
+  name: Set Color
+  description: Set the color (saturation) level
+  target:
+    entity:
+      domain: media_player
+      integration: sony_projector_adcp
+  fields:
+    value:
+      name: Color
+      description: Color level (0-100)
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+          mode: slider
+
+set_hue:
+  name: Set Hue
+  description: Set the hue level
+  target:
+    entity:
+      domain: media_player
+      integration: sony_projector_adcp
+  fields:
+    value:
+      name: Hue
+      description: Hue level (0-100)
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+          mode: slider
+
 increase_brightness:
   name: Increase Brightness
-  description: Increase brightness by 1
+  description: Increase brightness by 1 (uses ADCP relative adjustment)
   target:
     entity:
       domain: media_player
@@ -154,7 +566,7 @@ increase_brightness:
 
 decrease_brightness:
   name: Decrease Brightness
-  description: Decrease brightness by 1
+  description: Decrease brightness by 1 (uses ADCP relative adjustment)
   target:
     entity:
       domain: media_player
@@ -162,7 +574,7 @@ decrease_brightness:
 
 increase_contrast:
   name: Increase Contrast
-  description: Increase contrast by 1
+  description: Increase contrast by 1 (uses ADCP relative adjustment)
   target:
     entity:
       domain: media_player
@@ -170,7 +582,7 @@ increase_contrast:
 
 decrease_contrast:
   name: Decrease Contrast
-  description: Decrease contrast by 1
+  description: Decrease contrast by 1 (uses ADCP relative adjustment)
   target:
     entity:
       domain: media_player
@@ -178,7 +590,7 @@ decrease_contrast:
 
 increase_sharpness:
   name: Increase Sharpness
-  description: Increase sharpness by 1
+  description: Increase sharpness by 1 (uses ADCP relative adjustment)
   target:
     entity:
       domain: media_player
@@ -186,7 +598,7 @@ increase_sharpness:
 
 decrease_sharpness:
   name: Decrease Sharpness
-  description: Decrease sharpness by 1
+  description: Decrease sharpness by 1 (uses ADCP relative adjustment)
   target:
     entity:
       domain: media_player
@@ -194,7 +606,7 @@ decrease_sharpness:
 
 increase_light_output:
   name: Increase Light Output
-  description: Increase light output by 1
+  description: Increase light output by 1 (uses ADCP relative adjustment)
   target:
     entity:
       domain: media_player
@@ -202,7 +614,7 @@ increase_light_output:
 
 decrease_light_output:
   name: Decrease Light Output
-  description: Decrease light output by 1
+  description: Decrease light output by 1 (uses ADCP relative adjustment)
   target:
     entity:
       domain: media_player
@@ -246,7 +658,7 @@ send_raw_command:
   fields:
     command:
       name: Command
-      description: The ADCP command to send (e.g., 'power "on"' or 'brightness 75')
+      description: "The ADCP command to send (e.g. power \"on\" or brightness 75)"
       required: true
       example: 'picture_mode "cinema_film1"'
       selector:
