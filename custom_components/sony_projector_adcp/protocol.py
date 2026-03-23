@@ -340,14 +340,18 @@ class SonyProjectorADCP:
         """Get operation/light-source timer data (JSON array)."""
         return await self.get_json_status("timer")
 
-    async def get_temperature(self) -> Optional[float]:
-        """Get internal temperature."""
-        response = await self.send_command("temperature ?")
-        if response:
-            try:
-                return float(response)
-            except ValueError:
-                return None
+    async def get_temperature(self) -> Any:
+        """Get internal temperature. Returns dict or float depending on model."""
+        result = await self.get_json_status("temperature")
+        if isinstance(result, list) and result:
+            # XW5000 returns [{"intake_air": 23.0}]
+            temps = {}
+            for entry in result:
+                if isinstance(entry, dict):
+                    temps.update(entry)
+            return temps if temps else None
+        if isinstance(result, (int, float)):
+            return result
         return None
 
     async def get_error_status(self) -> Any:
