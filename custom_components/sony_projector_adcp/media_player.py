@@ -697,7 +697,26 @@ class SonyProjectorMediaPlayer(MediaPlayerEntity):
         if self._operation_hours is not None:
             attrs["operation_hours"] = self._operation_hours
         if self._temperature is not None:
-            attrs["temperature"] = self._temperature
+            temp_data = self._temperature
+            # Convert Celsius to Fahrenheit if HA is set to imperial
+            use_f = (
+                self.hass
+                and not self.hass.config.units.is_metric
+            )
+            if isinstance(temp_data, dict):
+                converted = {}
+                for k, v in temp_data.items():
+                    if isinstance(v, (int, float)) and use_f:
+                        converted[k] = round(v * 9 / 5 + 32, 1)
+                    else:
+                        converted[k] = v
+                attrs["temperature"] = converted
+                attrs["temperature_unit"] = "°F" if use_f else "°C"
+            elif isinstance(temp_data, (int, float)):
+                attrs["temperature"] = round(temp_data * 9 / 5 + 32, 1) if use_f else temp_data
+                attrs["temperature_unit"] = "°F" if use_f else "°C"
+            else:
+                attrs["temperature"] = temp_data
         if self._error_status:
             attrs["error_status"] = self._error_status
         if self._warning_status:
