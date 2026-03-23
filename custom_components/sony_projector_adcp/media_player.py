@@ -10,6 +10,7 @@ from homeassistant.components.media_player import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback, async_get_current_platform
 import voluptuous as vol
 from homeassistant.helpers import config_validation as cv
@@ -264,14 +265,20 @@ class SonyProjectorMediaPlayer(MediaPlayerEntity):
 
         self._attr_available = True
 
+    def _is_supported(self, adcp_command: str) -> bool:
+        """Check if a command is supported by this projector model."""
+        return adcp_command not in self._projector.unsupported_commands
+
     async def _poll_picture_settings(self) -> None:
         """Poll picture-related settings (called every cycle when ON)."""
-        for attr, getter in [
-            ("_current_source", self._projector.get_input),
-            ("_is_blank", self._projector.get_blank_status),
-            ("_picture_mode", self._projector.get_picture_mode),
-            ("_reality_creation", self._projector.get_reality_creation),
+        for attr, getter, cmd in [
+            ("_current_source", self._projector.get_input, "input"),
+            ("_is_blank", self._projector.get_blank_status, "blank"),
+            ("_picture_mode", self._projector.get_picture_mode, "picture_mode"),
+            ("_reality_creation", self._projector.get_reality_creation, "real_cre"),
         ]:
+            if not self._is_supported(cmd):
+                continue
             try:
                 val = await getter()
                 if val is not None:
@@ -287,6 +294,8 @@ class SonyProjectorMediaPlayer(MediaPlayerEntity):
             ("_color", "color"),
             ("_hue", "hue"),
         ]:
+            if not self._is_supported(param):
+                continue
             try:
                 val = await self._projector.get_numeric_value(param)
                 if val is not None:
@@ -296,19 +305,21 @@ class SonyProjectorMediaPlayer(MediaPlayerEntity):
 
     async def _poll_display_settings(self) -> None:
         """Poll display / processing settings (called every cycle when ON)."""
-        for attr, getter in [
-            ("_aspect_ratio", self._projector.get_aspect_ratio),
-            ("_hdr_mode", self._projector.get_hdr_mode),
-            ("_motionflow", self._projector.get_motionflow),
-            ("_color_temp", self._projector.get_color_temp),
-            ("_gamma", self._projector.get_gamma),
-            ("_color_space", self._projector.get_color_space),
-            ("_noise_reduction", self._projector.get_noise_reduction),
-            ("_film_mode", self._projector.get_film_mode),
-            ("_iris_mode", self._projector.get_iris_mode),
-            ("_lamp_control", self._projector.get_lamp_control),
-            ("_light_output_mode", self._projector.get_light_output_mode),
+        for attr, getter, cmd in [
+            ("_aspect_ratio", self._projector.get_aspect_ratio, "aspect"),
+            ("_hdr_mode", self._projector.get_hdr_mode, "hdr"),
+            ("_motionflow", self._projector.get_motionflow, "motionflow"),
+            ("_color_temp", self._projector.get_color_temp, "color_temp"),
+            ("_gamma", self._projector.get_gamma, "gamma_correction"),
+            ("_color_space", self._projector.get_color_space, "color_space"),
+            ("_noise_reduction", self._projector.get_noise_reduction, "nr"),
+            ("_film_mode", self._projector.get_film_mode, "film_mode"),
+            ("_iris_mode", self._projector.get_iris_mode, "iris_dyn_cont"),
+            ("_lamp_control", self._projector.get_lamp_control, "lamp_control"),
+            ("_light_output_mode", self._projector.get_light_output_mode, "light_output_dyn"),
         ]:
+            if not self._is_supported(cmd):
+                continue
             try:
                 val = await getter()
                 if val is not None:
@@ -393,6 +404,14 @@ class SonyProjectorMediaPlayer(MediaPlayerEntity):
                 self._signal_info = sig
         except Exception as e:
             _LOGGER.debug("Error getting signal info: %s", e)
+
+    def _require_supported(self, adcp_command: str, feature_name: str) -> None:
+        """Raise HomeAssistantError if command is not supported by this model."""
+        if adcp_command in self._projector.unsupported_commands:
+            model = self._model_name or "this projector"
+            raise HomeAssistantError(
+                f"{feature_name} is not supported by {model}"
+            )
 
     # ── Core media player controls ────────────────────────────────────
 
@@ -549,18 +568,21 @@ class SonyProjectorMediaPlayer(MediaPlayerEntity):
 
     async def async_set_film_mode(self, mode: str) -> None:
         """Set film mode."""
+        self._require_supported("film_mode", "Film Mode")
         if await self._projector.set_film_mode(mode):
             self._film_mode = mode
             self.async_write_ha_state()
 
     async def async_set_iris_mode(self, mode: str) -> None:
         """Set auto iris mode."""
+        self._require_supported("iris_dyn_cont", "Iris Mode")
         if await self._projector.set_iris_mode(mode):
             self._iris_mode = mode
             self.async_write_ha_state()
 
     async def async_set_lamp_control(self, mode: str) -> None:
         """Set lamp/laser control mode."""
+        self._require_supported("lamp_control", "Lamp Control")
         if await self._projector.set_lamp_control(mode):
             self._lamp_control = mode
             self.async_write_ha_state()
@@ -680,5 +702,9 @@ class SonyProjectorMediaPlayer(MediaPlayerEntity):
             attrs["error_status"] = self._error_status
         if self._warning_status:
             attrs["warning_status"] = self._warning_status
+
+        # Unsupported features (detected via err_cmd from projector)
+        if self._projector.unsupported_commands:
+            attrs["unsupported_features"] = sorted(self._projector.unsupported_commands)
 
         return attrs

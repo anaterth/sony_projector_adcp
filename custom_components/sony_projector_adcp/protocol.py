@@ -24,6 +24,7 @@ class SonyProjectorADCP:
         self._reader: Optional[asyncio.StreamReader] = None
         self._writer: Optional[asyncio.StreamWriter] = None
         self._lock = asyncio.Lock()
+        self.unsupported_commands: set[str] = set()
 
     async def connect(self) -> bool:
         """Connect to the projector and authenticate if needed."""
@@ -130,8 +131,18 @@ class SonyProjectorADCP:
                 _LOGGER.debug("Received response: %s", response)
 
                 # Check for errors
+                if response == "err_cmd":
+                    # Command not supported by this projector model
+                    cmd_root = command.split()[0]
+                    if cmd_root not in self.unsupported_commands:
+                        self.unsupported_commands.add(cmd_root)
+                        _LOGGER.warning(
+                            "Command '%s' is not supported by this projector model",
+                            cmd_root,
+                        )
+                    return None
                 if response.startswith("err_"):
-                    _LOGGER.error("Command error: %s for command: %s", response, command)
+                    _LOGGER.debug("Command error: %s for command: %s", response, command)
                     return None
 
                 return response
