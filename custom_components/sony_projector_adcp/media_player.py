@@ -79,7 +79,7 @@ async def async_setup_entry(
         ("set_brightness", "async_set_brightness", 0, 100),
         ("set_contrast", "async_set_contrast", 0, 100),
         ("set_sharpness", "async_set_sharpness", 0, 100),
-        ("set_light_output", "async_set_light_output", 0, 100),
+        ("set_light_output", "async_set_light_output", 0, 1000),
         ("set_color", "async_set_color", 0, 100),
         ("set_hue", "async_set_hue", 0, 100),
     ]:
