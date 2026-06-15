@@ -10,7 +10,7 @@ from homeassistant.components.media_player import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback, async_get_current_platform
 from homeassistant.util.unit_system import METRIC_SYSTEM
 import voluptuous as vol
@@ -408,11 +408,18 @@ class SonyProjectorMediaPlayer(MediaPlayerEntity):
             _LOGGER.debug("Error getting signal info: %s", e)
 
     def _require_supported(self, adcp_command: str, feature_name: str) -> None:
-        """Raise HomeAssistantError if command is not supported by this model."""
+        """Reject a feature the projector model doesn't have.
+
+        Uses ServiceValidationError (not HomeAssistantError) so Home Assistant
+        surfaces a clean message with no HTTP 500 / logged traceback — these
+        commands fail because of a model/hardware limitation, not an
+        integration bug.
+        """
         if adcp_command in self._projector.unsupported_commands:
             model = self._model_name or "this projector"
-            raise HomeAssistantError(
-                f"{feature_name} is not supported by {model}"
+            raise ServiceValidationError(
+                f"{feature_name} is not available on this projector model "
+                f"({model}) — this is a model limitation, not a bug."
             )
 
     # ── Core media player controls ────────────────────────────────────
