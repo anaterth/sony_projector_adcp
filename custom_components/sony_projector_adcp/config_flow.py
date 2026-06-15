@@ -4,9 +4,9 @@ from typing import Any, Dict, Optional
 
 import voluptuous as vol
 from homeassistant import config_entries
+from homeassistant.config_entries import ConfigFlowResult
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PASSWORD, CONF_PORT
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.data_entry_flow import FlowResult
 import homeassistant.helpers.config_validation as cv
 
 from .const import (
@@ -47,7 +47,7 @@ class SonyProjectorConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(
         self, user_input: Optional[Dict[str, Any]] = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle the initial step."""
         errors = {}
 
@@ -83,15 +83,14 @@ class SonyProjectorConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry):
         """Get the options flow for this handler."""
-        return SonyProjectorOptionsFlow(config_entry)
+        return SonyProjectorOptionsFlow()
 
 
 class SonyProjectorOptionsFlow(config_entries.OptionsFlow):
     """Handle options flow for Sony Projector ADCP."""
 
-    def __init__(self, config_entry):
-        """Initialize options flow."""
-        self.config_entry = config_entry
+    # No __init__: Home Assistant injects ``self.config_entry`` automatically
+    # (since 2024.11). Assigning it manually is deprecated and slated for removal.
 
     async def async_step_init(self, user_input=None):
         """Manage the options."""
@@ -104,14 +103,20 @@ class SonyProjectorOptionsFlow(config_entries.OptionsFlow):
                 {
                     vol.Optional(
                         CONF_USE_AUTH,
-                        default=self.config_entry.data.get(
-                            CONF_USE_AUTH, DEFAULT_USE_AUTH
+                        default=self.config_entry.options.get(
+                            CONF_USE_AUTH,
+                            self.config_entry.data.get(
+                                CONF_USE_AUTH, DEFAULT_USE_AUTH
+                            ),
                         ),
                     ): bool,
                     vol.Optional(
                         CONF_PASSWORD,
-                        default=self.config_entry.data.get(
-                            CONF_PASSWORD, DEFAULT_PASSWORD
+                        default=self.config_entry.options.get(
+                            CONF_PASSWORD,
+                            self.config_entry.data.get(
+                                CONF_PASSWORD, DEFAULT_PASSWORD
+                            ),
                         ),
                     ): str,
                 }

@@ -1,4 +1,5 @@
 """Constants for Sony Projector ADCP integration."""
+from datetime import timedelta
 
 DOMAIN = "sony_projector_adcp"
 
@@ -14,8 +15,11 @@ DEFAULT_PASSWORD = "Projector"
 DEFAULT_USE_AUTH = True
 DEFAULT_NAME = "Sony Projector"
 
-# Update intervals
-SCAN_INTERVAL = 30  # seconds
+# Update intervals.
+# Must be a timedelta: Home Assistant only honors a platform-level SCAN_INTERVAL
+# when media_player.py imports this name (a plain int is ignored, and the default
+# media_player poll of ~10s applies instead).
+SCAN_INTERVAL = timedelta(seconds=30)
 
 # Input sources (ADCP-supported; projector rejects unsupported ones with err_val)
 INPUT_SOURCES = {

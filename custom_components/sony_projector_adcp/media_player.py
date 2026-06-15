@@ -12,6 +12,7 @@ from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback, async_get_current_platform
+from homeassistant.util.unit_system import METRIC_SYSTEM
 import voluptuous as vol
 from homeassistant.helpers import config_validation as cv
 
@@ -33,6 +34,7 @@ from .const import (
     NOISE_REDUCTION_MODES,
     PICTURE_MODES,
     POWER_STATE_MAP,
+    SCAN_INTERVAL,
 )
 from .protocol import SonyProjectorADCP
 
@@ -431,10 +433,15 @@ class SonyProjectorMediaPlayer(MediaPlayerEntity):
                 source_key = key
                 break
 
-        if source_key:
-            if await self._projector.set_input(source_key):
-                self._current_source = source_key
-                self.async_write_ha_state()
+        if source_key is None:
+            _LOGGER.warning(
+                "Unknown source '%s'; valid sources: %s", source, self.source_list
+            )
+            return
+
+        if await self._projector.set_input(source_key):
+            self._current_source = source_key
+            self.async_write_ha_state()
 
     # ── Key command ───────────────────────────────────────────────────
 
@@ -701,7 +708,7 @@ class SonyProjectorMediaPlayer(MediaPlayerEntity):
             # Convert Celsius to Fahrenheit if HA is set to imperial
             use_f = (
                 self.hass
-                and not self.hass.config.units.is_metric
+                and self.hass.config.units is not METRIC_SYSTEM
             )
             if isinstance(temp_data, dict):
                 converted = {}

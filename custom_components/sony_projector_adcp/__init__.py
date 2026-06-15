@@ -17,8 +17,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Sony Projector ADCP from a config entry."""
     host = entry.data[CONF_HOST]
     port = entry.data[CONF_PORT]
-    password = entry.data.get(CONF_PASSWORD, DEFAULT_PASSWORD)
-    use_auth = entry.data.get(CONF_USE_AUTH, DEFAULT_USE_AUTH)
+    # Options set via the Configure dialog take precedence over the values
+    # captured at initial setup; fall back to data, then to the defaults.
+    password = entry.options.get(
+        CONF_PASSWORD, entry.data.get(CONF_PASSWORD, DEFAULT_PASSWORD)
+    )
+    use_auth = entry.options.get(
+        CONF_USE_AUTH, entry.data.get(CONF_USE_AUTH, DEFAULT_USE_AUTH)
+    )
 
     projector = SonyProjectorADCP(host, port, password, use_auth)
 
@@ -34,7 +40,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
+    # Reload the entry when options change so new auth/password are applied.
+    entry.async_on_unload(entry.add_update_listener(_async_update_listener))
+
     return True
+
+
+async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Reload the config entry when its options are updated."""
+    await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
